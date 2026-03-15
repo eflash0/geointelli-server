@@ -1,6 +1,5 @@
 package com.geointelli.ai.property.service.Entity;
 
-import java.math.BigDecimal;
 import java.util.List;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,27 +10,49 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@Setter
+@Table(name = "properties")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Property {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String address;
-    private Double bedrooms;
-    private Double bathrooms;
-    private Double livingArea;
-    private BigDecimal assessedValue;
+    private String folio;
 
-    @OneToOne
-    @JoinColumn(name = "parcel_id")
-    private Parcel parcel;
+    private String propertyType;
+
+    private String zoning;
+
+    private Integer yearBuilt;
+
+    private Double bedroomCount;
+
+    private Double bathroomCount;
+
+    private Integer halfBathroomCount;
+
+    private Integer floorCount;
+
+    private Integer unitCount;
+
+    private Integer buildingActualArea;
+
+    private Integer buildingHeatedArea;
+
+    private Double lotSize;
+
+    private Integer assessmentYear;
+
+    private Long assessedValue;
 
     @ManyToMany
     @JoinTable(
@@ -42,8 +63,23 @@ public class Property {
     private List<Owner> owners;
 
     @OneToMany(mappedBy = "property")
+    private List<Assessment> assessments;
+
+    @OneToMany(mappedBy = "property")
+    private List<Building> buildings;
+
+    @OneToMany(mappedBy = "property")
+    private List<Land> lands;
+
+    @OneToMany(mappedBy = "property")
     private List<Sale> sales;
 
     @OneToMany(mappedBy = "property")
     private List<TaxRecord> taxes;
+
+    @OneToOne(mappedBy = "property")
+    private Parcel parcel;
+
+    @OneToOne(mappedBy = "property")
+    private Address address;
 }

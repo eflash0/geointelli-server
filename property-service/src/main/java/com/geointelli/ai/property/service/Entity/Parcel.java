@@ -4,17 +4,19 @@ import org.locationtech.jts.geom.MultiPolygon;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "parcels_new")
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Parcel {
 
     @Id
@@ -30,6 +32,7 @@ public class Parcel {
     @Column(name = "lot_size")
     private Double lotSize;
 
-    @OneToOne(mappedBy = "parcel")
+    @OneToOne
+    @JoinColumn(name = "property_id")
     private Property property;
 }

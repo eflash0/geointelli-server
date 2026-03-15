@@ -1,5 +1,15 @@
-package com.geointelli.ai.property.service.Dto;
+package com.geointelli.ai.property.service.DTO;
 
-public class SaleDto {
-    
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import lombok.Data;
+
+@Data
+public class SaleDTO {
+
+    private LocalDate saleDate;
+
+    private BigDecimal salePrice;
+
 }

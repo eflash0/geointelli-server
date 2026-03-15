@@ -1,31 +1,30 @@
 package com.geointelli.ai.property.service.Entity;
 
-import java.util.List;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "owners")
+@Table(name = "addresses")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Owner {
+@NoArgsConstructor
+public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
-    private String name;
+    private String streetNumber;
 
-    private String mailingAddress;
+    private String streetName;
+
+    private String unit;
 
     private String city;
 
@@ -33,8 +32,6 @@ public class Owner {
 
     private String zip;
 
-    private String country;
-
-    @ManyToMany(mappedBy = "owners")
-    private List<Property> properties;
+    @OneToOne
+    private Property property;
 }

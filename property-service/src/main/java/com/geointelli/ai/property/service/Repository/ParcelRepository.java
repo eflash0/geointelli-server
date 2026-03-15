@@ -1,0 +1,18 @@
+package com.geointelli.ai.property.service.Repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.geointelli.ai.property.service.Entity.Parcel;
+
+@Repository
+public interface ParcelRepository extends JpaRepository<Parcel,Long>{
+    Parcel findByFolio(String folio);
+
+    @Query(value = "SELECT * FROM parcels WHERE geom && ST_MakeEnvelope(:xmin,:ymin,:xmax,:ymax,4326)", nativeQuery = true)
+    List<Parcel> findWithinBoundingBox(@Param("xmin") double xmin,@Param("ymin") double ymin,@Param("xmax") double xmax,@Param("ymax") double ymax);
+}
