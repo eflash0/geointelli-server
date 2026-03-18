@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.Repository;
+package com.geointelli.ai.property.service.repository;
 
 public class GeometryRepository {
     

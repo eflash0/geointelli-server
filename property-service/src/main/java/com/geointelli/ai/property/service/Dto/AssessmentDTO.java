@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.DTO;
+package com.geointelli.ai.property.service.dto;
 
 import lombok.Data;
 
@@ -10,6 +10,8 @@ public class AssessmentDTO {
     private Long landValue;
 
     private Long buildingValue;
+
+    private Long extraFeatureValue;
 
     private Long totalValue;
 }

@@ -1,0 +1,72 @@
+package com.geointelli.ai.property.service.client.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class SalesInfo {
+
+    @JsonProperty("DateOfSale")
+    private String dateOfSale;
+
+    @JsonProperty("DocumentStamps")
+    private double documentStamps;
+
+    @JsonProperty("EncodedRecordBookAndPage")
+    private String encodedRecordBookAndPage;
+
+    @JsonProperty("GranteeName1")
+    private String granteeName1;
+
+    @JsonProperty("GranteeName2")
+    private String granteeName2;
+
+    @JsonProperty("GrantorName1")
+    private String grantorName1;
+
+    @JsonProperty("GrantorName2")
+    private String grantorName2;
+
+    @JsonProperty("Message")
+    private String message;
+
+    @JsonProperty("OfficialRecordBook")
+    private String officialRecordBook;
+
+    @JsonProperty("OfficialRecordPage")
+    private String officialRecordPage;
+
+    @JsonProperty("QualificationDescription")
+    private String qualificationDescription;
+
+    @JsonProperty("QualifiedFlag")
+    private String qualifiedFlag;
+
+    @JsonProperty("QualifiedSYear")
+    private String qualifiedSYear;
+
+    @JsonProperty("QualifiedSourceCode")
+    private String qualifiedSourceCode;
+
+    @JsonProperty("ReasonCode")
+    private String reasonCode;
+
+    @JsonProperty("ReviewCode")
+    private String reviewCode;
+
+    @JsonProperty("SaleId")
+    private int saleId;
+
+    @JsonProperty("SaleInstrument")
+    private String saleInstrument;
+
+    @JsonProperty("SalePrice")
+    private double salePrice;
+
+    @JsonProperty("VacantFlag")
+    private Boolean vacantFlag;
+
+    @JsonProperty("ValidCode")
+    private String validCode;
+
+    @JsonProperty("VerifyCode")
+    private String verifyCode;
+}

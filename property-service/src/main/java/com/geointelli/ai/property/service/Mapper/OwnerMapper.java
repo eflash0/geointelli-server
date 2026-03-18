@@ -1,9 +1,9 @@
-package com.geointelli.ai.property.service.Mapper;
+package com.geointelli.ai.property.service.mapper;
 
 import org.mapstruct.Mapper;
 
-import com.geointelli.ai.property.service.DTO.OwnerDTO;
-import com.geointelli.ai.property.service.Entity.Owner;
+import com.geointelli.ai.property.service.dto.OwnerDTO;
+import com.geointelli.ai.property.service.entity.Owner;
 
 @Mapper(componentModel = "spring")
 public interface OwnerMapper {

@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.Entity;
+package com.geointelli.ai.property.service.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.DTO;
+package com.geointelli.ai.property.service.dto;
 
 import java.util.List;
 
@@ -9,13 +9,31 @@ public class PropertyDTO {
 
     private String folio;
 
+    private String propertyType;
+
+    private String zoning;
+
+    private Integer yearBuilt;
+
     private Double bedroomCount;
 
     private Double bathroomCount;
 
-    private Integer yearBuilt;
+    private Integer halfBathroomCount;
+
+    private Integer floorCount;
+
+    private Integer unitCount;
+
+    private Integer buildingActualArea;
+
+    private Integer buildingHeatedArea;
 
     private Double lotSize;
+
+    private Integer assessmentYear;
+
+    private Long assessedValue;
 
     private AddressDTO address;
 

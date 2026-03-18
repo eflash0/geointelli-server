@@ -1,6 +1,4 @@
-package com.geointelli.ai.property.service.Entity;
-
-import java.math.BigDecimal;
+package com.geointelli.ai.property.service.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

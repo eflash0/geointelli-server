@@ -1,14 +1,16 @@
-package com.geointelli.ai.property.service.DTO;
-
-import java.math.BigDecimal;
+package com.geointelli.ai.property.service.dto;
 
 import lombok.Data;
 
 @Data
 public class TaxDTO {
 
-    private Integer taxYear;
+    private Integer year;
 
-    private BigDecimal taxAmount;
+    private Long taxableValue;
+
+    private Long taxAmount;
+
+    private Long exemptions;
 
 }

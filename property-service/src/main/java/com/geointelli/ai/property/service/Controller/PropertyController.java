@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.Controller;
+package com.geointelli.ai.property.service.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

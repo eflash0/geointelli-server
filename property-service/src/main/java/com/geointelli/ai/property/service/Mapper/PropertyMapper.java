@@ -1,8 +1,8 @@
-package com.geointelli.ai.property.service.Mapper;
+package com.geointelli.ai.property.service.mapper;
 import org.mapstruct.Mapper;
 
-import com.geointelli.ai.property.service.DTO.PropertyDTO;
-import com.geointelli.ai.property.service.Entity.Property;
+import com.geointelli.ai.property.service.dto.PropertyDTO;
+import com.geointelli.ai.property.service.entity.Property;
 
 @Mapper(componentModel = "spring",
         uses = {

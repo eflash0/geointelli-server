@@ -1,5 +1,6 @@
-package com.geointelli.ai.property.service.Service;
+package com.geointelli.ai.property.service.service;
 
-public class PropertyService {
+public interface PropertyService {
 
+    
 }

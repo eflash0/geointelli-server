@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.Repository;
+package com.geointelli.ai.property.service.repository;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.geointelli.ai.property.service.Entity.Parcel;
+import com.geointelli.ai.property.service.entity.Parcel;
 
 @Repository
 public interface ParcelRepository extends JpaRepository<Parcel,Long>{

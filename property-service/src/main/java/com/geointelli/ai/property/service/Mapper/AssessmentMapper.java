@@ -1,9 +1,9 @@
-package com.geointelli.ai.property.service.Mapper;
+package com.geointelli.ai.property.service.mapper;
 
 import org.mapstruct.Mapper;
 
-import com.geointelli.ai.property.service.DTO.AssessmentDTO;
-import com.geointelli.ai.property.service.Entity.Assessment;
+import com.geointelli.ai.property.service.dto.AssessmentDTO;
+import com.geointelli.ai.property.service.entity.Assessment;
 
 @Mapper(componentModel = "spring")
 public interface AssessmentMapper {

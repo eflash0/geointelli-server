@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.Controller;
+package com.geointelli.ai.property.service.controller;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geointelli.ai.property.service.DTO.ParcelDTO;
-import com.geointelli.ai.property.service.Service.ParcelService;
+import com.geointelli.ai.property.service.dto.ParcelDTO;
+import com.geointelli.ai.property.service.service.ParcelService;
 
 import lombok.AllArgsConstructor;
 
