@@ -20,15 +20,27 @@ public class Address {
     @GeneratedValue
     private Long id;
 
-    private String streetNumber;
+    private String address;
 
-    private String streetName;
-
-    private String unit;
+    private int buildingNumber;
 
     private String city;
 
-    private String state;
+    private String houseNumberSuffix;
+
+    private String message;
+
+    private String streetName;
+
+    private int streetNumber;
+
+    private String streetPrefix;
+
+    private String streetSuffix;
+
+    private String streetSuffixDirection;
+
+    private String unit;
 
     private String zip;
 

@@ -1,5 +1,7 @@
 package com.geointelli.ai.property.service.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,19 +18,31 @@ import lombok.NoArgsConstructor;
 @Table(name = "taxes")
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaxRecord {
+public class Tax {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private BigDecimal cityExemptionValue;
+
+    private BigDecimal cityTaxableValue;
+
+    private BigDecimal countyExemptionValue;
+
+    private BigDecimal countyTaxableValue;
+
+    private BigDecimal regionalExemptionValue;
+
+    private BigDecimal regionalTaxableValue;
+
+    private BigDecimal schoolExemptionValue;
+
+    private BigDecimal schoolTaxableValue;
+
     private Integer year;
 
-    private Long taxableValue;
-
-    private Long taxAmount;
-
-    private Long exemptions;
+    private String message;
 
     @ManyToOne
     @JoinColumn(name = "property_id")

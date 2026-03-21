@@ -1,5 +1,7 @@
 package com.geointelli.ai.property.service.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -16,19 +18,39 @@ public class Land {
     @GeneratedValue
     private Long id;
 
-    private Double units;
+    private Double adjustedUnitPrice;
 
-    private Double unitPrice;
-
-    private String zoning;
-
-    private Double frontage;
+    private BigDecimal calculatedValue;
 
     private Double depth;
 
-    private Double area;
+    private Double frontFeet;
 
     private String landUse;
+
+    private String landlineType;
+
+    private String message;
+
+    private String muniZone;
+
+    private String muniZoneDescription;
+
+    private String paZoneDescription;
+
+    private Double percentCondition;
+
+    private Integer rollYear;
+
+    private Integer totalAdjustments;
+
+    private String unitType;
+
+    private Double units;
+
+    private String useCode;
+
+    private String zone;
 
     @ManyToOne
     private Property property;

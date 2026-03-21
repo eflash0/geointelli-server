@@ -1,4 +1,4 @@
-package com.geointelli.ai.property.service.mapper;
+package com.geointelli.ai.property.service.mapper.external;
 
 import org.mapstruct.Mapper;
 
@@ -6,7 +6,6 @@ import com.geointelli.ai.property.service.config.IgnoreUnmappedMapperConfig;
 import com.geointelli.ai.property.service.dto.ParcelDTO;
 import com.geointelli.ai.property.service.entity.Parcel;
 @Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
-public interface ParcelMapper {
+public interface ExternalParcelMapper {
     ParcelDTO toDTO(Parcel parcel);
-    Parcel toEntity(ParcelDTO parcelDTO);
 }

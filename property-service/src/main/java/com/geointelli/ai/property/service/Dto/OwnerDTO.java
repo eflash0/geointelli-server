@@ -5,16 +5,22 @@ import lombok.Data;
 @Data
 public class OwnerDTO {
 
+    private Long id;
+
     private String name;
 
-    private String mailingAddress;
+    private String description;
 
-    private String city;
+    private String role;
 
-    private String state;
+    private Integer percentageOwn;
 
-    private String zip;
+    private String shortDescription;
 
-    private String country;
+    private String tenancyCd;
+
+    private Boolean marriedFlag;
+
+    private String message;
 
 }

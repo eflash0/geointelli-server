@@ -1,14 +1,13 @@
-package com.geointelli.ai.property.service.mapper;
+package com.geointelli.ai.property.service.mapper.external;
 
 import org.mapstruct.Mapper;
 
+import com.geointelli.ai.property.service.client.dto.SalesInfo;
 import com.geointelli.ai.property.service.config.IgnoreUnmappedMapperConfig;
 import com.geointelli.ai.property.service.dto.SaleDTO;
-import com.geointelli.ai.property.service.entity.Sale;
 
 @Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
-public interface SaleMapper {
+public interface ExternalSaleMapper {
 
-    SaleDTO toDTO(Sale sale);
-    Sale toEntity(SaleDTO saleDTO);
+    SaleDTO toDTO(SalesInfo saleInfo);
 }

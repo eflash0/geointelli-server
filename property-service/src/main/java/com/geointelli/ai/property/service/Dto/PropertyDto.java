@@ -7,35 +7,59 @@ import lombok.Data;
 @Data
 public class PropertyDTO {
 
+    private Long id;
+
     private String folio;
 
-    private String propertyType;
+    private String parentFolio;
 
-    private String zoning;
+    private Integer bathroomCount;
 
-    private Integer yearBuilt;
+    private Integer bedroomCount;
 
-    private Double bedroomCount;
+    private Double halfBathroomCount;
 
-    private Double bathroomCount;
+    private Integer buildingActualArea;
 
-    private Integer halfBathroomCount;
+    private Integer buildingBaseArea;
+
+    private Integer buildingEffectiveArea;
+
+    private Integer buildingGrossArea;
+
+    private Integer buildingHeatedArea;
+
+    private String dorCode;
+
+    private String dorDescription;
+
+    private Integer neighborhood;
+
+    private String neighborhoodDescription;
+
+    private Double lotSize;
 
     private Integer floorCount;
 
     private Integer unitCount;
 
-    private Integer buildingActualArea;
+    private String yearBuilt;
 
-    private Integer buildingHeatedArea;
+    private String municipality;
 
-    private Double lotSize;
+    private String subdivision;
 
-    private Integer assessmentYear;
+    private String primaryZone;
 
-    private Long assessedValue;
+    private String primaryZoneDescription;
 
-    private AddressDTO address;
+    private String status;
+
+    private String showCurrentValuesFlag;
+
+    private String message;
+
+    private List<AddressDTO> addresses;
 
     private List<OwnerDTO> owners;
 

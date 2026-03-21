@@ -21,6 +21,7 @@ public class ParcelServiceImpl implements ParcelService {
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
 
+    @Override
     public List<ParcelDTO> getParcelsWithinBoundingBox(double xmin,double ymin,double xmax,double ymax){
         List<Parcel> parcels = parcelRepository.findWithinBoundingBox(xmin,ymin,xmax,ymax);
         return parcels.stream().map(parcel -> parcelMapper.toDTO(parcel)).collect(Collectors.toList());

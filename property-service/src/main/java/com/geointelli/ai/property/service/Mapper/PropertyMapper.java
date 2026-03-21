@@ -1,6 +1,7 @@
 package com.geointelli.ai.property.service.mapper;
 import org.mapstruct.Mapper;
 
+import com.geointelli.ai.property.service.config.IgnoreUnmappedMapperConfig;
 import com.geointelli.ai.property.service.dto.PropertyDTO;
 import com.geointelli.ai.property.service.entity.Property;
 
@@ -14,8 +15,9 @@ import com.geointelli.ai.property.service.entity.Property;
             SaleMapper.class,
             TaxMapper.class,
             ParcelMapper.class
-        })
+        }, config = IgnoreUnmappedMapperConfig.class)
 public interface PropertyMapper {
 
     PropertyDTO toDTO(Property property);
+    Property toEntity(PropertyDTO propertyDTO);
 }

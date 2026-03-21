@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class SaleDTO {
 
+    private Long id;
+    
     private LocalDate saleDate;
 
     private BigDecimal salePrice;

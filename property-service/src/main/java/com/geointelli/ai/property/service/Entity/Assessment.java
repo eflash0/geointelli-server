@@ -1,5 +1,7 @@
 package com.geointelli.ai.property.service.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -16,15 +18,19 @@ public class Assessment {
     @GeneratedValue
     private Long id;
 
+    private BigDecimal assessedValue;
+
+    private BigDecimal buildingOnlyValue;
+
+    private BigDecimal extraFeatureValue;
+
+    private BigDecimal landValue;
+
+    private BigDecimal totalValue;
+
     private Integer year;
 
-    private Long landValue;
-
-    private Long buildingValue;
-
-    private Long extraFeatureValue;
-
-    private Long totalValue;
+    private String message;
 
     @ManyToOne
     private Property property;

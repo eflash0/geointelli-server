@@ -1,30 +1,48 @@
 package com.geointelli.ai.property.service.dto;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 @Data
 public class BuildingDTO {
 
-    private Integer actualYearBuilt;
+    private Long id;
 
-    private Integer effectiveYearBuilt;
+    private Integer actual;
+
+    private Integer actualArea;
+
+    private Double adjustedBasePrice;
+
+    private Integer buildingNo;
+
+    private BigDecimal depreciatedValue;
+
+    private Integer effective;
+
+    private Integer effectiveArea;
 
     private Integer grossArea;
 
     private Integer heatedArea;
 
-    private Integer stories;
+    private String message;
 
-    private String constructionType;
+    private Double percentComp;
 
-    private String roofType;
+    private Double percentageGood;
 
-    private String exteriorWall;
+    private BigDecimal replacementCostNew;
 
-    private String quality;
+    private Integer rollYear;
 
-    private String condition;
+    private Integer segNo;
 
-    private Double replacementCost;
+    private Integer totalAdjustedPoints;
+
+    private String traversePoints;
+
+    private String improvementModelDesc;
 }
 

@@ -1,13 +1,12 @@
-package com.geointelli.ai.property.service.mapper;
+package com.geointelli.ai.property.service.mapper.external;
 
 import org.mapstruct.Mapper;
 
+import com.geointelli.ai.property.service.client.dto.Landline;
 import com.geointelli.ai.property.service.config.IgnoreUnmappedMapperConfig;
 import com.geointelli.ai.property.service.dto.LandDTO;
-import com.geointelli.ai.property.service.entity.Land;
 
 @Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
-public interface LandMapper {
-    LandDTO toDTO(Land land);
-    Land toEntity(LandDTO landDTO);
+public interface ExternalLandMapper {
+    LandDTO toDTO(Landline landline);
 }

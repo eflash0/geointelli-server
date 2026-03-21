@@ -1,13 +1,12 @@
-package com.geointelli.ai.property.service.mapper;
+package com.geointelli.ai.property.service.mapper.external;
 
 import org.mapstruct.Mapper;
 
+import com.geointelli.ai.property.service.client.dto.AssessmentInfo;
 import com.geointelli.ai.property.service.config.IgnoreUnmappedMapperConfig;
 import com.geointelli.ai.property.service.dto.AssessmentDTO;
-import com.geointelli.ai.property.service.entity.Assessment;
 
 @Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
-public interface AssessmentMapper {
-    AssessmentDTO toDTO(Assessment assessment);
-    Assessment toEntity(AssessmentDTO assessmentDTO);
+public interface ExternalAssessmentMapper {
+    AssessmentDTO toDTO(AssessmentInfo assessmentInfo);
 }

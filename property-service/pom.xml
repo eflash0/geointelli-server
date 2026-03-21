@@ -119,8 +119,14 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
                         </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>
+                            -Amapstruct.unmappedTargetPolicy=IGNORE
+                        </compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 

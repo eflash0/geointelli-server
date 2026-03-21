@@ -2,11 +2,13 @@ package com.geointelli.ai.property.service.client.dto;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExtraFeatureInfo {
 
     @JsonProperty("ActualYearBuilt")

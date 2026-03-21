@@ -1,6 +1,8 @@
 package com.geointelli.ai.property.service.entity;
 
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,31 +30,53 @@ public class Property {
 
     private String folio;
 
-    private String propertyType;
+    private String parentFolio;
 
-    private String zoning;
+    private Integer bathroomCount;
 
-    private Integer yearBuilt;
+    private Integer bedroomCount;
 
-    private Double bedroomCount;
+    private Double halfBathroomCount;
 
-    private Double bathroomCount;
+    private Integer buildingActualArea;
 
-    private Integer halfBathroomCount;
+    private Integer buildingBaseArea;
+
+    private Integer buildingEffectiveArea;
+
+    private Integer buildingGrossArea;
+
+    private Integer buildingHeatedArea;
+
+    private String dorCode;
+
+    private String dorDescription;
+
+    private Integer neighborhood;
+
+    private String neighborhoodDescription;
+
+    private Double lotSize;
 
     private Integer floorCount;
 
     private Integer unitCount;
 
-    private Integer buildingActualArea;
+    private String yearBuilt;
 
-    private Integer buildingHeatedArea;
+    private String municipality;
 
-    private Double lotSize;
+    private String subdivision;
 
-    private Integer assessmentYear;
+    private String primaryZone;
 
-    private Long assessedValue;
+    private String primaryZoneDescription;
+
+    private String status;
+
+    private String showCurrentValuesFlag;
+
+    private String message;
 
     @ManyToMany
     @JoinTable(
@@ -62,24 +86,24 @@ public class Property {
     )
     private List<Owner> owners;
 
-    @OneToMany(mappedBy = "property")
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Assessment> assessments;
 
-    @OneToMany(mappedBy = "property")
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Building> buildings;
 
-    @OneToMany(mappedBy = "property")
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Land> lands;
 
-    @OneToMany(mappedBy = "property")
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sale> sales;
 
-    @OneToMany(mappedBy = "property")
-    private List<TaxRecord> taxes;
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tax> taxes;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Parcel parcel;
 
-    @OneToOne(mappedBy = "property")
-    private Address address;
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
 }
