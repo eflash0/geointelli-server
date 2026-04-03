@@ -1,6 +1,7 @@
 package com.geointelli.ai.property.service.service;
 
-public interface PropertyService {
+import com.geointelli.ai.property.service.entity.Property;
 
-    
+public interface PropertyService {
+    public Property saveProperty(Property property);
 }

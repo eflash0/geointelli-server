@@ -10,18 +10,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name = "taxes")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tax {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     private BigDecimal cityExemptionValue;

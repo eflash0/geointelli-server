@@ -3,7 +3,14 @@ package com.geointelli.ai.property.service.client.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@ToString
 public class PropertyInfo {
     @JsonProperty("BathroomCount")
     private Integer bathroomCount;
@@ -42,7 +49,7 @@ public class PropertyInfo {
     private String neighborhoodDescription;
 
     @JsonProperty("FolioNumber")
-    private String folioNumber;
+    private String folio;
 
     @JsonProperty("ParentFolio")
     private String parentFolio;

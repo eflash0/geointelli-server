@@ -3,6 +3,7 @@ import org.mapstruct.Mapper;
 
 import com.geointelli.ai.property.service.client.dto.PropertyInfo;
 import com.geointelli.ai.property.service.config.IgnoreUnmappedMapperConfig;
+import com.geointelli.ai.property.service.config.StringSanitizer;
 import com.geointelli.ai.property.service.dto.PropertyDTO;
 
 @Mapper(componentModel = "spring",
@@ -14,7 +15,9 @@ import com.geointelli.ai.property.service.dto.PropertyDTO;
             ExternalLandMapper.class,
             ExternalSaleMapper.class,
             ExternalTaxMapper.class,
+            StringSanitizer.class,
         }, config = IgnoreUnmappedMapperConfig.class)
-public interface ExternalPropertyMapper {
+public interface ExternalPropertyMapper
+ {
     PropertyDTO toDTO(PropertyInfo propertyInfo);
 }

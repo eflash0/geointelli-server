@@ -59,7 +59,7 @@ public class PropertyDTO {
 
     private String message;
 
-    private List<AddressDTO> addresses;
+    private AddressDTO address;
 
     private List<OwnerDTO> owners;
 

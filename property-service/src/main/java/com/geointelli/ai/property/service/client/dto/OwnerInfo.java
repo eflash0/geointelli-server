@@ -2,6 +2,8 @@ package com.geointelli.ai.property.service.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.geointelli.ai.property.service.serialization.FlexibleBooleanDeserializer;
 
 import lombok.Data;
 
@@ -27,6 +29,7 @@ public class OwnerInfo {
     private String tenancyCd;
 
     @JsonProperty("MarriedFlag")
+    @JsonDeserialize(using = FlexibleBooleanDeserializer.class)
     private Boolean marriedFlag;
 
     @JsonProperty("Message")

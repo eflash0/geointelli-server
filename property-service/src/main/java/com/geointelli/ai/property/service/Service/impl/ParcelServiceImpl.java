@@ -1,6 +1,8 @@
 package com.geointelli.ai.property.service.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -25,5 +27,16 @@ public class ParcelServiceImpl implements ParcelService {
     public List<ParcelDTO> getParcelsWithinBoundingBox(double xmin,double ymin,double xmax,double ymax){
         List<Parcel> parcels = parcelRepository.findWithinBoundingBox(xmin,ymin,xmax,ymax);
         return parcels.stream().map(parcel -> parcelMapper.toDTO(parcel)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Parcel> preloadParcels() {
+        return parcelRepository.findAll().stream()
+                .collect(Collectors.toMap(Parcel::getFolio, Function.identity()));
+    }
+
+    @Override
+    public List<String> getAllFolios() {
+        return parcelRepository.findAllFolios();
     }
 }

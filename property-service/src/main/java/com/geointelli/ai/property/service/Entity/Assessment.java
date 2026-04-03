@@ -7,11 +7,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "assessments")
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Assessment {
 
     @Id

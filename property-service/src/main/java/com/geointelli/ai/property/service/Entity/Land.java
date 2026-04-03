@@ -8,10 +8,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "lands")
-@Data
+@Getter
+@Setter
+@ToString
 public class Land {
 
     @Id

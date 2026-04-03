@@ -1,5 +1,6 @@
 package com.geointelli.ai.property.service.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,11 +8,13 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geointelli.ai.property.service.client.MiameDadeApiClient;
 import com.geointelli.ai.property.service.client.dto.PropertyApiResponse;
+import com.geointelli.ai.property.service.client.dto.SiteAddress;
 import com.geointelli.ai.property.service.entity.Address;
 import com.geointelli.ai.property.service.entity.Assessment;
 import com.geointelli.ai.property.service.entity.Building;
 import com.geointelli.ai.property.service.entity.Land;
 import com.geointelli.ai.property.service.entity.Owner;
+import com.geointelli.ai.property.service.entity.Parcel;
 import com.geointelli.ai.property.service.entity.Property;
 import com.geointelli.ai.property.service.entity.Sale;
 import com.geointelli.ai.property.service.entity.Tax;
@@ -32,18 +35,23 @@ import com.geointelli.ai.property.service.mapper.external.ExternalPropertyMapper
 import com.geointelli.ai.property.service.mapper.external.ExternalSaleMapper;
 import com.geointelli.ai.property.service.mapper.external.ExternalTaxMapper;
 import com.geointelli.ai.property.service.repository.OwnerRepository;
+import com.geointelli.ai.property.service.repository.ParcelRepository;
 import com.geointelli.ai.property.service.repository.PropertyRepository;
 import com.geointelli.ai.property.service.service.PropertyIngestionService;
+import com.geointelli.ai.property.service.service.PropertyService;
 
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PropertyIngestionServiceImpl implements PropertyIngestionService {
     private final MiameDadeApiClient miameDadaApiClient;
-    private final PropertyRepository propertyRepository;
+    private final ObjectMapper objectMapper;
+    private final ParcelRepository parcelRepository;
     private final OwnerRepository ownerRepository;
+    private final PropertyRepository propertyRepository;
     private final PropertyMapper propertyMapper;
     private final ExternalPropertyMapper externalPropertyMapper;
     private final OwnerMapper ownerMapper;
@@ -60,60 +68,174 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
     private final ExternalBuildingMapper externalBuildingMapper;
     private final AddressMapper addressMapper;
     private final ExternalAddressMapper externalAddressMapper;
+    private final PropertyService propertyService;
 
     @Override
-    public void ingest(String folio) throws Exception {
+    public void ingest(String folio) {
+        try {
+            Property existingProperty = propertyRepository.findByFolio(folio).orElse(null);
+            if(existingProperty != null){
+                log.info("property already found with this folio");
+                return;
+            }
 
-        Mono<String> responseEmitter = miameDadaApiClient.importMiameDadePropertyDetails(folio);
-        String responseString = responseEmitter.block();
-        ObjectMapper mapper = new ObjectMapper();
-        PropertyApiResponse propertyApiResponse = mapper.readValue(responseString, PropertyApiResponse.class);
+            String response = miameDadaApiClient.importMiameDadePropertyDetails(folio).block();
 
-        Property property = propertyMapper.toEntity(externalPropertyMapper.toDTO(propertyApiResponse.getPropertyInfo()));
+            PropertyApiResponse api = objectMapper.readValue(response, PropertyApiResponse.class);
+            System.out.println("------------response property:---------------" + api.getPropertyInfo());
 
-        List<Owner> owners = propertyApiResponse.getOwnerInfos().stream()
-                    .map(externalOwnerMapper::toDTO)
-                    .map(ownerMapper::toEntity).toList();
-        ownerRepository.saveAll(owners);                    
+            Property property = mapProperty(api);
+            System.out.println("--------------------property:-----------------" + property);
+            linkEntities(property, api);
+            
 
-        List<Assessment> assessments = propertyApiResponse.getAssessment().getAssessmentInfos()
-                    .stream().map(externalAssessmentMapper::toDTO)
-                    .map(assessmentMapper::toEntity).toList();
-        assessments.forEach(assessment -> assessment.setProperty(property));    
+            log.info("-------------------saving the property-----------------------");
+            Property savedProperty = propertyService.saveProperty(property);
 
-        List<Sale> sales = propertyApiResponse.getSalesInfos().stream()
-                    .map(externalSaleMapper::toDTO)
-                    .map(saleMapper::toEntity).toList();
-        sales.forEach(sale -> sale.setProperty(property));
+            attachParcel(folio, savedProperty);
+            log.info("---------------------Ingested folio {}------------------", folio);
 
-        List<Land> lands = propertyApiResponse.getLand().getLandlines().stream()
-                    .map(externalLandMapper::toDTO)
-                    .map(landMapper::toEntity).toList();
-        lands.forEach(land -> land.setProperty(property));
-
-        List<Tax> taxes = propertyApiResponse.getTaxable().getTaxableInfos().stream()
-                    .map(externalTaxMapper::toDTO)
-                    .map(taxMapper::toEntity).toList();
-        taxes.forEach(tax -> tax.setProperty(property));            
-                    
-        List<Building> buildings = propertyApiResponse.getBuilding().getBuildingInfos().stream()
-                    .map(externalBuildingMapper::toDTO)
-                    .map(buildingMapper::toEntity).toList();
-        buildings.forEach(building -> building.setProperty(property));                    
-
-        List<Address> addresses = propertyApiResponse.getSiteAddress().stream()
-                    .map(externalAddressMapper::toDTO)
-                    .map(addressMapper::toEntity).toList();
-        addresses.forEach(address -> address.setProperty(property));
-        
-        property.setOwners(owners);
-        property.setAddresses(addresses);
-        property.setAssessments(assessments);
-        property.setBuildings(buildings);
-        property.setLands(lands);
-        property.setTaxes(taxes);
-        property.setSales(sales);
-        propertyRepository.save(property);
+        } catch (Exception e) {
+            log.error("Failed ingest folio {}", folio, e);
+        }
     }
 
+    private Property mapProperty(PropertyApiResponse api) {
+        return propertyMapper.toEntity(
+                externalPropertyMapper.toDTO(api.getPropertyInfo())
+        );
+    }
+
+    private String sanitize(String s) {
+        if (s == null) return null;
+        return s.replace("\u0000", "").trim();
+    }
+
+    private void linkEntities(Property property, PropertyApiResponse api) {
+
+        List<Owner> owners = api.getOwnerInfos().stream()
+        .map(externalOwnerMapper::toDTO)
+        .map(ownerMapper::toEntity)
+        .map(o -> {
+            o.setName(sanitize(o.getName()));
+            o.setTenancyCd(sanitize(o.getTenancyCd()));
+            o.setRole(sanitize(o.getRole()));
+            o.setDescription(sanitize(o.getDescription()));
+            o.setShortDescription(sanitize(o.getShortDescription()));
+            o.setMessage(sanitize(o.getMessage()));
+
+            if (o.getId() == null) {
+                List<Owner> existingList =
+                ownerRepository.findAllByNameAndTenancyCdAndRole(
+                    sanitize(o.getName()),
+                    sanitize(o.getTenancyCd()),
+                    sanitize(o.getRole())
+                );
+
+            if (!existingList.isEmpty()) {
+                return existingList.get(0);
+            }
+
+            return ownerRepository.save(o);
+            }
+            return o;
+        })
+        .toList();
+
+        owners.forEach(o -> {
+            if (o.getProperties() == null) o.setProperties(new ArrayList<>());
+            o.getProperties().add(property);
+        });
+
+        List<Assessment> assessments = api.getAssessment().getAssessmentInfos().stream()
+                .map(externalAssessmentMapper::toDTO)
+                .map(assessmentMapper::toEntity)
+                .peek(a -> a.setProperty(property))
+                .toList();
+        System.out.println("------------response assessment:---------------" + assessments);
+
+
+        List<Sale> sales = api.getSalesInfos().stream()
+                .map(externalSaleMapper::toDTO)
+                .map(saleMapper::toEntity)
+                .peek(s -> s.setProperty(property))
+                .toList();
+
+        List<Land> lands = api.getLand().getLandlines().stream()
+                .map(externalLandMapper::toDTO)
+                .map(landMapper::toEntity)
+                .peek(l -> l.setProperty(property))
+                .toList();
+        System.out.println("------------response land:---------------" + lands);
+
+
+        List<Tax> taxes = api.getTaxable().getTaxableInfos().stream()
+                .map(externalTaxMapper::toDTO)
+                .map(taxMapper::toEntity)
+                .peek(t -> t.setProperty(property))
+                .toList();
+
+        List<Building> buildings = api.getBuilding().getBuildingInfos().stream()
+                .map(externalBuildingMapper::toDTO)
+                .map(buildingMapper::toEntity)
+                .peek(b -> b.setProperty(property))
+                .toList();
+
+        List<SiteAddress> addresses = api.getSiteAddress();     
+        if(!addresses.isEmpty()){
+            Address address = addressMapper.toEntity(externalAddressMapper.toDTO(addresses.get(0)));
+            property.setAddress(address);
+            System.out.println("----------------------address:---------"+address);
+        }   
+        
+        property.setOwners(owners);
+        if(property.getAssessments() == null)
+            property.setAssessments(new ArrayList<>());
+        property.getAssessments().addAll(assessments);
+        // property.setAssessments(assessments);
+
+        // property.setSales(sales);
+        if(property.getSales() == null)
+            property.setSales(new ArrayList<>());
+        property.getSales().addAll(sales);
+
+        // property.setLands(lands);
+        if(property.getLands() == null)
+            property.setLands(new ArrayList<>());
+        property.getLands().addAll(lands);
+
+        // property.setTaxes(taxes);
+        if(property.getTaxes() == null)
+            property.setTaxes(new ArrayList<>());
+        property.getTaxes().addAll(taxes);
+
+        if(property.getBuildings() == null)
+            property.setBuildings(new ArrayList<>());
+        property.getBuildings().addAll(buildings);
+        // property.setBuildings(buildings);
+    }
+
+    private void attachParcel(String folio, Property property) {
+        log.info("--------------------attaching parcel----------------");
+        log.info("----------------property id : {}-------------------", property.getId());
+        if (folio == null) {
+            log.warn("Skipping parcel attach: folio is null");
+            return;
+        }
+        List<Parcel> parcels = parcelRepository.findAllByFolio(folio);
+
+        if (parcels.isEmpty()) {
+            log.warn("No parcel found for folio {}", folio);
+            return;
+        }
+
+        Parcel parcel = parcels.get(0);
+
+        parcel.setProperty(property);
+        property.setParcel(parcel);
+
+        if (parcels.size() > 1) {
+            log.warn("Multiple parcels found for folio {}. Only the first one (fid={}) was attached.", folio, parcel.getId());
+        }
+    }
 }
