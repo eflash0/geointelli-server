@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     defer-datasource-initialization: true  
     show-sql: true
     properties:
@@ -16,7 +16,7 @@ spring:
         
   sql:
     init:
-      mode: always
+      mode: never #always
 
 server:
   port: 8081

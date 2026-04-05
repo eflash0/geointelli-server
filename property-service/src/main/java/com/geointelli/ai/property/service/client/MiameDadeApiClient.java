@@ -21,12 +21,12 @@ public class MiameDadeApiClient {
     private String baseUrl;
     public MiameDadeApiClient(){
         HttpClient httpClient = HttpClient.create()
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 50000)
-                                .responseTimeout(Duration.ofMillis(5000))
-                                .doOnConnected(conn -> 
-                                    conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-                                    .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
-                                             
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000) // 10s max connect
+            .responseTimeout(Duration.ofSeconds(20))             // 20s to get response
+            .doOnConnected(conn -> 
+                conn.addHandlerLast(new ReadTimeoutHandler(20, TimeUnit.SECONDS))
+                    .addHandlerLast(new WriteTimeoutHandler(10, TimeUnit.SECONDS))
+            );                                     
         baseUrl = "https://apps.miamidadepa.gov/PApublicServiceProxy/PaServicesProxy.ashx";  
         
         client = WebClient.builder().baseUrl(baseUrl)

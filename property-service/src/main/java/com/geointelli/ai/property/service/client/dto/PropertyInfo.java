@@ -86,4 +86,12 @@ public class PropertyInfo {
 
     @JsonProperty("Message")
     private String message;
+
+    public void setFolio(String folio) {
+    if (folio != null) {
+        this.folio = folio.replace("-", "");
+    } else {
+        this.folio = null;
+    }
+}
 }

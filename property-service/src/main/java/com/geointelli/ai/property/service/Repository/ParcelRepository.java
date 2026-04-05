@@ -16,7 +16,13 @@ public interface ParcelRepository extends JpaRepository<Parcel,Long>{
 
     List<Parcel> findAllByFolio(String folio);
 
-    @Query(value = "SELECT * FROM parcels WHERE geom && ST_MakeEnvelope(:xmin,:ymin,:xmax,:ymax,4326)", nativeQuery = true)
+    @Query(value = """
+                    SELECT *
+                    FROM parcels p
+                    WHERE p.geom && ST_MakeEnvelope(:xmin, :ymin, :xmax, :ymax, 4326)
+                    AND ST_Intersects(p.geom, ST_MakeEnvelope(:xmin, :ymin, :xmax, :ymax, 4326))
+                    LIMIT 500
+                    """, nativeQuery = true)
     List<Parcel> findWithinBoundingBox(@Param("xmin") double xmin,@Param("ymin") double ymin,@Param("xmax") double xmax,@Param("ymax") double ymax);
 
     @Query("SELECT folio from Parcel p")

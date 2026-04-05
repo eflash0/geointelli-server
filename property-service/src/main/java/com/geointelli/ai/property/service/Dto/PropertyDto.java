@@ -1,5 +1,6 @@
 package com.geointelli.ai.property.service.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -73,5 +74,5 @@ public class PropertyDTO {
 
     private List<TaxDTO> taxes;
 
-    private ParcelDTO parcel;
+    private List<ParcelDTO> parcels = new ArrayList<>();
 }

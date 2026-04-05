@@ -107,9 +107,31 @@ public class Property {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tax> taxes = new ArrayList<>();
 
-    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Parcel parcel;
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Parcel> parcels = new ArrayList<>();
 
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
+
+    public void addParcel(Parcel parcel) {
+    if (this.parcels == null || isImmutable(this.parcels)) {
+        this.parcels = new ArrayList<>();
+    }
+    this.parcels.add(parcel);
+    parcel.setProperty(this);
+}
+
+public void setParcels(List<Parcel> parcels) {
+    if (parcels == null) {
+        this.parcels = new ArrayList<>();
+    } else {
+        // This creates a fresh, MUTABLE copy of whatever list was passed in
+        this.parcels = new ArrayList<>(parcels);
+    }
+}
+
+    private boolean isImmutable(List<?> list) {
+        return list.getClass().getName().contains("Immutable") || 
+            list.getClass().getName().contains("Arrays$ArrayList");
+    }
 }

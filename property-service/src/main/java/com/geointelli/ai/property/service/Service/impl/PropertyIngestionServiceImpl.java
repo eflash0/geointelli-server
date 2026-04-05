@@ -2,12 +2,14 @@ package com.geointelli.ai.property.service.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geointelli.ai.property.service.client.MiameDadeApiClient;
 import com.geointelli.ai.property.service.client.dto.PropertyApiResponse;
+import com.geointelli.ai.property.service.client.dto.PropertyInfo;
 import com.geointelli.ai.property.service.client.dto.SiteAddress;
 import com.geointelli.ai.property.service.entity.Address;
 import com.geointelli.ai.property.service.entity.Assessment;
@@ -40,8 +42,10 @@ import com.geointelli.ai.property.service.repository.PropertyRepository;
 import com.geointelli.ai.property.service.service.PropertyIngestionService;
 import com.geointelli.ai.property.service.service.PropertyService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +75,7 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
     private final PropertyService propertyService;
 
     @Override
+    @Transactional
     public void ingest(String folio) {
         try {
             Property existingProperty = propertyRepository.findByFolio(folio).orElse(null);
@@ -99,6 +104,29 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
             log.error("Failed ingest folio {}", folio, e);
         }
     }
+
+    // public Mono<Void> ingestReactive(String folio){
+
+    //     return miameDadaApiClient.get()
+    //             .uri(uriBuilder -> uriBuilder
+    //                     .queryParam("folioNumber", folio)
+    //                     .build())
+    //             .retrieve()
+    //             .bodyToMono(PropertyInfo.class)
+
+    //             // 🔥 retry with backoff
+    //             .retryWhen(
+    //                 Retry.backoff(3, Duration.ofSeconds(2))
+    //                     .maxBackoff(Duration.ofSeconds(10))
+    //             )
+
+    //             .doOnNext(propertyInfo -> {
+    //                 // map + save
+    //                 saveProperty(propertyInfo);
+    //             })
+
+    //             .then(); // return Mono<Void>
+    // }
 
     private Property mapProperty(PropertyApiResponse api) {
         return propertyMapper.toEntity(
@@ -132,15 +160,14 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
                     sanitize(o.getRole())
                 );
 
-            if (!existingList.isEmpty()) {
-                return existingList.get(0);
-            }
-
-            return ownerRepository.save(o);
+                if (!existingList.isEmpty()) {
+                    return existingList.get(0);
+                }
+                return ownerRepository.save(o);
             }
             return o;
         })
-        .toList();
+        .collect(Collectors.toList());;
 
         owners.forEach(o -> {
             if (o.getProperties() == null) o.setProperties(new ArrayList<>());
@@ -148,10 +175,10 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
         });
 
         List<Assessment> assessments = api.getAssessment().getAssessmentInfos().stream()
-                .map(externalAssessmentMapper::toDTO)
-                .map(assessmentMapper::toEntity)
-                .peek(a -> a.setProperty(property))
-                .toList();
+            .map(externalAssessmentMapper::toDTO)
+            .map(assessmentMapper::toEntity)
+            .peek(a -> a.setProperty(property))
+            .collect(Collectors.toList());
         System.out.println("------------response assessment:---------------" + assessments);
 
 
@@ -159,13 +186,13 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
                 .map(externalSaleMapper::toDTO)
                 .map(saleMapper::toEntity)
                 .peek(s -> s.setProperty(property))
-                .toList();
+                .collect(Collectors.toList());
 
         List<Land> lands = api.getLand().getLandlines().stream()
                 .map(externalLandMapper::toDTO)
                 .map(landMapper::toEntity)
                 .peek(l -> l.setProperty(property))
-                .toList();
+                .collect(Collectors.toList());
         System.out.println("------------response land:---------------" + lands);
 
 
@@ -173,13 +200,13 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
                 .map(externalTaxMapper::toDTO)
                 .map(taxMapper::toEntity)
                 .peek(t -> t.setProperty(property))
-                .toList();
+                .collect(Collectors.toList());
 
         List<Building> buildings = api.getBuilding().getBuildingInfos().stream()
                 .map(externalBuildingMapper::toDTO)
                 .map(buildingMapper::toEntity)
                 .peek(b -> b.setProperty(property))
-                .toList();
+                .collect(Collectors.toList());
 
         List<SiteAddress> addresses = api.getSiteAddress();     
         if(!addresses.isEmpty()){
@@ -216,26 +243,25 @@ public class PropertyIngestionServiceImpl implements PropertyIngestionService {
     }
 
     private void attachParcel(String folio, Property property) {
-        log.info("--------------------attaching parcel----------------");
-        log.info("----------------property id : {}-------------------", property.getId());
+        log.info("--------------------attaching parcels----------------");
+        
         if (folio == null) {
             log.warn("Skipping parcel attach: folio is null");
             return;
         }
+
         List<Parcel> parcels = parcelRepository.findAllByFolio(folio);
 
         if (parcels.isEmpty()) {
-            log.warn("No parcel found for folio {}", folio);
+            log.warn("No parcels found for folio {}", folio);
             return;
         }
 
-        Parcel parcel = parcels.get(0);
-
-        parcel.setProperty(property);
-        property.setParcel(parcel);
-
-        if (parcels.size() > 1) {
-            log.warn("Multiple parcels found for folio {}. Only the first one (fid={}) was attached.", folio, parcel.getId());
+        for (Parcel parcel : parcels) {
+            property.addParcel(parcel);
+            log.debug("Attached parcel ID: {} to property folio: {}", parcel.getId(), folio);
         }
+
+        log.info("Successfully attached {} parcels to folio {}", parcels.size(), folio);
     }
 }

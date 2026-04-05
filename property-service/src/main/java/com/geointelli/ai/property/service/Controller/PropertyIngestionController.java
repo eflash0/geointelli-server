@@ -28,11 +28,11 @@ public class PropertyIngestionController {
     @PostMapping("/run")
     public ResponseEntity<String> runIngestion() {
         log.info("Manual ingestion triggered via API");
-        // propertyIngestionManager.ingestAllFolios(parcelService.getAllFolios());
-        List<String> folios = parcelService.getAllFolios();
-        for(String folio : folios){
-            propertyIngestionService.ingest(folio);
-        }
+        propertyIngestionManager.ingestAllFolios(parcelService.getAllFolios());
+        // List<String> folios = parcelService.getAllFolios();
+        // for(String folio : folios){
+        //     propertyIngestionService.ingest(folio);
+        // }
         return ResponseEntity.ok("Property ingestion started");
     }
 }

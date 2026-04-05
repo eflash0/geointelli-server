@@ -2,6 +2,9 @@ package com.geointelli.ai.property.service.manager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import org.springframework.stereotype.Service;
 
 import com.geointelli.ai.property.service.service.PropertyIngestionService;
@@ -18,8 +21,9 @@ public class PropertyIngestionManager {
 
     private final PropertyIngestionService propertyIngestionService;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(10);
     private final AtomicBoolean running = new AtomicBoolean(false);
+    private final ExecutorService executor = Executors.newFixedThreadPool(5);
+    private final Semaphore semaphore = new Semaphore(5);
 
     public void ingestAllFolios(List<String> folios) {
 
@@ -28,20 +32,34 @@ public class PropertyIngestionManager {
             return;
         }
 
-        log.info("Starting ingestion for {} folios", folios.size());
-
         try {
-            int batchSize = 100;
+            int batchSize = 50;
 
             for (int i = 0; i < folios.size(); i += batchSize) {
                 List<String> batch = folios.subList(i, Math.min(i + batchSize, folios.size()));
 
                 List<Future<?>> futures = batch.stream()
-                        .map(folio -> executor.submit(() -> {
+                    .map(folio -> executor.submit(() -> {
+                        int attempts = 0;
+
+                        while (attempts < 3) {
+                            try {
+                                semaphore.acquire();
                                 propertyIngestionService.ingest(folio);
-                        }))
-                        .collect(Collectors.toList());
-                // wait batch completion
+                                log.info("Success folio {}", folio);
+                                return;
+                            } catch (Exception e) {
+                                attempts++;
+                                log.warn("Retry {} for folio {}", attempts, folio);
+                            } finally {
+                                semaphore.release();
+                            }
+                        }
+
+                        log.error("Failed permanently for folio {}", folio);
+                    }))
+                    .collect(Collectors.toList());
+
                 for (Future<?> future : futures) {
                     try {
                         future.get();
@@ -49,12 +67,49 @@ public class PropertyIngestionManager {
                         log.error("Batch execution error", e);
                     }
                 }
+
+                Thread.sleep(2000); // pacing
             }
 
-            log.info("Ingestion completed successfully");
-
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } finally {
             running.set(false);
         }
     }
+
+    // public void ingestAllFoliosReactive(List<String> folios) {
+
+    //     if (!running.compareAndSet(false, true)) {
+    //         log.warn("Ingestion already running. Skipping...");
+    //         return;
+    //     }
+
+    //     log.info("Starting ingestion for {} folios", folios.size());
+
+    //     Flux.fromIterable(folios)
+
+    //         // 🔥 rate limit (VERY IMPORTANT)
+    //         .delayElements(Duration.ofMillis(300))
+
+    //         // 🔥 control concurrency (THIS replaces thread pool)
+    //         .flatMap(folio ->
+    //                 propertyIngestionService.ingestReactive(folio)
+    //                     .doOnError(e -> log.error("Failed folio {}", folio, e))
+    //                     .onErrorResume(e -> Mono.empty()) // skip failures
+    //             , 4 // concurrency
+    //         )
+
+    //         .doOnComplete(() -> {
+    //             log.info("Ingestion completed");
+    //             running.set(false);
+    //         })
+
+    //         .doOnError(e -> {
+    //             log.error("Global ingestion error", e);
+    //             running.set(false);
+    //         })
+
+    //         .subscribe();
+    // }
 }
