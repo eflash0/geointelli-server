@@ -1,0 +1,93 @@
+package com.geointelli.ai.property.service.mapper;
+
+import com.geointelli.ai.property.service.dto.GeometryDTO;
+
+import org.locationtech.jts.geom.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Mapper(componentModel = "spring")
+public interface GeometryMapper {
+
+    // ================== Entity → DTO ==================
+    @Named("toDTO")
+    default GeometryDTO toDTO(Geometry geom) {
+        if (geom == null) return null;
+
+        GeometryDTO dto = new GeometryDTO();
+        dto.setType(geom.getGeometryType());
+
+        if (geom instanceof Point p) {
+            dto.setCoordinates(new double[]{p.getX(), p.getY()});
+        } else if (geom instanceof Polygon polygon) {
+            dto.setCoordinates(convertPolygon(polygon));
+        } else if (geom instanceof MultiPolygon multiPolygon) {
+            dto.setCoordinates(convertMultiPolygon(multiPolygon));
+        } else if (geom instanceof LineString line) {
+            dto.setCoordinates(convertCoordinates(line.getCoordinates()));
+        }
+
+        return dto;
+    }
+
+    // ================== DTO → MultiPolygon ==================
+    @Named("fromDTO")
+    default MultiPolygon fromDTO(GeometryDTO dto) {
+        if (dto == null) return null;
+
+        GeometryFactory factory = new GeometryFactory();
+
+        if (!"MultiPolygon".equals(dto.getType())) {
+            throw new IllegalArgumentException("Expected MultiPolygon, but got: " + dto.getType());
+        }
+
+        @SuppressWarnings("unchecked")
+        List<List<List<double[]>>> polys = (List<List<List<double[]>>>) dto.getCoordinates();
+
+        Polygon[] polygons = new Polygon[polys.size()];
+        for (int i = 0; i < polys.size(); i++) {
+            List<List<double[]>> polyRings = polys.get(i);
+            LinearRing shell = toLinearRing(polyRings.get(0), factory);
+            LinearRing[] holes = new LinearRing[polyRings.size() > 1 ? polyRings.size() - 1 : 0];
+            for (int j = 1; j < polyRings.size(); j++) {
+                holes[j - 1] = toLinearRing(polyRings.get(j), factory);
+            }
+            polygons[i] = factory.createPolygon(shell, holes);
+        }
+
+        return factory.createMultiPolygon(polygons);
+    }
+
+    // ================== HELPERS ==================
+    default LinearRing toLinearRing(List<double[]> coords, GeometryFactory factory) {
+        Coordinate[] coordinates = coords.stream()
+                .map(c -> new Coordinate(c[0], c[1]))
+                .toArray(Coordinate[]::new);
+        return factory.createLinearRing(coordinates);
+    }
+
+    default List<double[]> convertCoordinates(Coordinate[] coordinates) {
+        List<double[]> list = new ArrayList<>();
+        for (Coordinate c : coordinates) list.add(new double[]{c.getX(), c.getY()});
+        return list;
+    }
+
+    default List<List<double[]>> convertPolygon(Polygon polygon) {
+        List<List<double[]>> rings = new ArrayList<>();
+        rings.add(convertCoordinates(polygon.getExteriorRing().getCoordinates()));
+        for (int i = 0; i < polygon.getNumInteriorRing(); i++)
+            rings.add(convertCoordinates(polygon.getInteriorRingN(i).getCoordinates()));
+        return rings;
+    }
+
+    default List<List<List<double[]>>> convertMultiPolygon(MultiPolygon multiPolygon) {
+        List<List<List<double[]>>> polygons = new ArrayList<>();
+        for (int i = 0; i < multiPolygon.getNumGeometries(); i++)
+            polygons.add(convertPolygon((Polygon) multiPolygon.getGeometryN(i)));
+        return polygons;
+    }
+}
