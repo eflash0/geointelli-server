@@ -12,7 +12,7 @@ import com.geointelli.ai.property.service.entity.Parcel;
 
 @Repository
 public interface ParcelRepository extends JpaRepository<Parcel,Long>{
-    Optional<Parcel> findByFolio(String folio);
+    List<Parcel> findByFolio(String folio);
 
     List<Parcel> findAllByFolio(String folio);
 

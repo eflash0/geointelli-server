@@ -11,4 +11,5 @@ public interface ParcelService {
     public List<ParcelDTO> getParcelsWithinBoundingBox(double xmin,double ymin,double xmax,double ymax);
     public Map<String, Parcel> preloadParcels();
     public List<String> getAllFolios();
+    public List<ParcelDTO> getByFolio(String folio);
 }

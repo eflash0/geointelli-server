@@ -39,4 +39,9 @@ public class ParcelServiceImpl implements ParcelService {
     public List<String> getAllFolios() {
         return parcelRepository.findAllFolios();
     }
+
+    @Override
+    public List<ParcelDTO> getByFolio(String folio) {
+        return parcelRepository.findByFolio(folio).stream().map(parcel -> parcelMapper.toDTO(parcel)).toList();
+    }
 }

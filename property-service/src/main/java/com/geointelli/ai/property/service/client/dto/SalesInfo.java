@@ -1,5 +1,8 @@
 package com.geointelli.ai.property.service.client.dto;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,7 +13,7 @@ import lombok.Data;
 public class SalesInfo {
 
     @JsonProperty("DateOfSale")
-    private String dateOfSale;
+    private LocalDate saleDate;
 
     @JsonProperty("DocumentStamps")
     private double documentStamps;
@@ -74,4 +77,14 @@ public class SalesInfo {
 
     @JsonProperty("VerifyCode")
     private String verifyCode;
+
+    public void setSaleDate(String dateOfSale) {
+        if (dateOfSale == null || dateOfSale.isEmpty()) {
+            this.saleDate = null;
+            return;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+        this.saleDate = LocalDate.parse(dateOfSale, formatter);
+    }
 }

@@ -33,4 +33,9 @@ public class ParcelController {
 
         return ResponseEntity.ok(parcels);
     }
+
+    @GetMapping("/byfolio")
+    ResponseEntity<List<ParcelDTO>> getByFolio(@RequestParam String folio){
+        return ResponseEntity.ok(parcelService.getByFolio(folio));
+    }
 }

@@ -1,5 +1,7 @@
 package com.geointelli.ai.property.service.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -20,27 +22,41 @@ public class Building {
     @GeneratedValue
     private Long id;
 
-    private Integer actualYearBuilt;
+    private Integer actual;
 
-    private Integer effectiveYearBuilt;
+    private Integer actualArea;
+
+    private Double adjustedBasePrice;
+
+    private Integer buildingNo;
+
+    private BigDecimal depreciatedValue;
+
+    private Integer effective;
+
+    private Integer effectiveArea;
 
     private Integer grossArea;
 
     private Integer heatedArea;
 
-    private Integer stories;
+    private String message;
 
-    private String constructionType;
+    private Double percentComp;
 
-    private String roofType;
+    private Double percentageGood;
 
-    private String exteriorWall;
+    private BigDecimal replacementCostNew;
 
-    private String quality;
+    private Integer rollYear;
 
-    private String condition;
+    private Integer segNo;
 
-    private Double replacementCost;
+    private Integer totalAdjustedPoints;
+
+    private String traversePoints;
+
+    private String improvementModelDesc;
 
     @ManyToOne
     private Property property;
