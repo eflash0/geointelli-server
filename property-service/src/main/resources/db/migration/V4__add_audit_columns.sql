@@ -40,6 +40,13 @@ ALTER TABLE taxes ADD COLUMN updated_at TIMESTAMP;
 ALTER TABLE users ADD COLUMN created_at TIMESTAMP;
 ALTER TABLE users ADD COLUMN updated_at TIMESTAMP;
 
+ALTER TABLE property_favorites ADD COLUMN created_at TIMESTAMP;
+ALTER TABLE property_favorites ADD COLUMN updated_at TIMESTAMP;
+
+ALTER TABLE property_transportation_analysis
+ADD COLUMN created_at TIMESTAMP,
+ADD COLUMN updated_at TIMESTAMP;
+
 UPDATE addresses SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
 UPDATE assessments SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
 UPDATE buildings SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
@@ -54,6 +61,11 @@ UPDATE property_value_predictions SET created_at = NOW(), updated_at = NOW() WHE
 UPDATE sales SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
 UPDATE taxes SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
 UPDATE users SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
+UPDATE property_favorites SET created_at = NOW(), updated_at = NOW() WHERE created_at IS NULL;
+UPDATE property_transportation_analysis SET created_at = CURRENT_TIMESTAMP,
+    updated_at = CURRENT_TIMESTAMP
+    WHERE created_at IS NULL
+    OR updated_at IS NULL;
 
 
 ALTER TABLE addresses ALTER COLUMN created_at SET NOT NULL;
@@ -97,3 +109,10 @@ ALTER TABLE taxes ALTER COLUMN updated_at SET NOT NULL;
 
 ALTER TABLE users ALTER COLUMN created_at SET NOT NULL;
 ALTER TABLE users ALTER COLUMN updated_at SET NOT NULL;
+
+ALTER TABLE property_favorites ALTER COLUMN created_at SET NOT NULL;
+ALTER TABLE property_favorites ALTER COLUMN updated_at SET NOT NULL;
+
+ALTER TABLE property_transportation_analysis
+ALTER COLUMN created_at SET NOT NULL,
+ALTER COLUMN updated_at SET NOT NULL;

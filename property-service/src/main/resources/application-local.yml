@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/zentratest
+    url: jdbc:postgresql://localhost:5432/geozentra
     # url: jdbc:postgresql://localhost:5432/geozentra
     driver-class-name: org.postgresql.Driver
 
@@ -24,7 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8090/realms/geointelli
+          issuer-uri: http://localhost:8090/realms/geozentra
 
   flyway:
     enabled: false
